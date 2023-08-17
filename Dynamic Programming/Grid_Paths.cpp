@@ -74,28 +74,44 @@ ll phin(ll n) {ll number = n; if (n % 2 == 0) {number /= 2; while (n % 2 == 0) n
 ll getRandomNumber(ll l, ll r) {return uniform_int_distribution<ll>(l, r)(rng);} 
 /*--------------------------------------------------------------------------------------------------------------------------*/
 void solve() {
-    ll n, x;
-    cin >> n >> x;
-    vector<int> prices(n);
-    vector<int> pages(n);
-    for (ll i=0; i<n; i++) {
-        cin >> prices[i];
+    ll n;
+    cin >> n;
+    vector<vector<char>> grid(n, vector<char>(n));
+    for (int i=0; i<n; i++) {
+        for (int j=0; j<n; j++) {
+            cin >> grid[i][j];
+        }
     }
-    for (ll i=0; i<n; i++) {
-        cin >> pages[i];
+    debug(grid);
+    if (grid[n-1][n-1] == '*') {
+        cout << "0";
+        exit(0);
     }
-    vector<vector<int>> dp(n+1, vector<int>(x+1, 0));
-    for (int i=1; i<=n; i++) {
-        for (int j=0; j<=x; j++) {
-            if (j >= prices[i-1]) {
-                dp[i][j] = max(dp[i-1][j], pages[i-1] + dp[i-1][j-prices[i-1]]);
+    vector<vector<ll>> dp(n, vector<ll>(n, 0));
+    dp[n-1][n-1] = 1L;
+    for (int i=n-2; i>=0; i--) {
+        if (grid[i][n-1] == '.')
+            dp[i][n-1] = dp[i+1][n-1];
+        else 
+            dp[i][n-1] = 0;
+        
+        if (grid[n-1][i] == '.')
+            dp[n-1][i] = dp[n-1][i+1];
+        else 
+            dp[n-1][i] = 0;
+    }
+    debug(dp);
+    for (int i=n-2; i>=0; i--) {
+        for (int j=n-2; j>=0; j--) {
+            if (grid[i][j] == '.') {
+                dp[i][j] = (dp[i+1][j] + dp[i][j+1]) % MOD;
             } else {
-                dp[i][j] = dp[i-1][j];
+                dp[i][j] = 0;
             }
         }
     }
     debug(dp);
-    cout << dp[n][x];
+    cout << dp[0][0] % MOD;
 }
 int main() {
 #ifdef local

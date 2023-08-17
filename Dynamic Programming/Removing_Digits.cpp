@@ -74,28 +74,27 @@ ll phin(ll n) {ll number = n; if (n % 2 == 0) {number /= 2; while (n % 2 == 0) n
 ll getRandomNumber(ll l, ll r) {return uniform_int_distribution<ll>(l, r)(rng);} 
 /*--------------------------------------------------------------------------------------------------------------------------*/
 void solve() {
-    ll n, x;
-    cin >> n >> x;
-    vector<int> prices(n);
-    vector<int> pages(n);
-    for (ll i=0; i<n; i++) {
-        cin >> prices[i];
+    ll n;
+    cin >> n;
+    vector<ll> dp(n+1, INF);
+    for (int i=0; i<10; i++) {
+        dp[i] = 1;
     }
-    for (ll i=0; i<n; i++) {
-        cin >> pages[i];
-    }
-    vector<vector<int>> dp(n+1, vector<int>(x+1, 0));
-    for (int i=1; i<=n; i++) {
-        for (int j=0; j<=x; j++) {
-            if (j >= prices[i-1]) {
-                dp[i][j] = max(dp[i-1][j], pages[i-1] + dp[i-1][j-prices[i-1]]);
-            } else {
-                dp[i][j] = dp[i-1][j];
-            }
+    dp[0] = 0;
+    debug(dp);
+    for (int i=10; i<=n; i++) {
+        vector<ll> digits;
+        ll temp = i;
+        while (temp != 0) {
+            digits.pb(temp%10);
+            temp=temp/10;
         }
+        ll maxDigit = *max_element(all(digits));
+        if (i-maxDigit >= 0 && dp[i-maxDigit] != INF)
+            dp[i] = min(dp[i], dp[i-maxDigit]+1);
     }
     debug(dp);
-    cout << dp[n][x];
+    cout << dp[n];
 }
 int main() {
 #ifdef local

@@ -76,26 +76,23 @@ ll getRandomNumber(ll l, ll r) {return uniform_int_distribution<ll>(l, r)(rng);}
 void solve() {
     ll n, x;
     cin >> n >> x;
-    vector<int> prices(n);
-    vector<int> pages(n);
+    vector<ll> coins(n);
     for (ll i=0; i<n; i++) {
-        cin >> prices[i];
+        cin >> coins[i];
     }
-    for (ll i=0; i<n; i++) {
-        cin >> pages[i];
-    }
-    vector<vector<int>> dp(n+1, vector<int>(x+1, 0));
-    for (int i=1; i<=n; i++) {
-        for (int j=0; j<=x; j++) {
-            if (j >= prices[i-1]) {
-                dp[i][j] = max(dp[i-1][j], pages[i-1] + dp[i-1][j-prices[i-1]]);
-            } else {
-                dp[i][j] = dp[i-1][j];
-            }
+    sort(all(coins));
+    debug(coins);
+    vector<ll> dp(x+1, 0);
+    dp[0] = 1;
+    for (ll j=1; j<=x; j++) {
+        for (ll i=0; i<n; i++) {
+            ll coin = coins[i];
+            if (j-coin < 0) break;
+            dp[j] += dp[j-coin] % MOD; 
         }
     }
     debug(dp);
-    cout << dp[n][x];
+    cout << dp[x] % MOD;
 }
 int main() {
 #ifdef local

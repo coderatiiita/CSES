@@ -76,26 +76,37 @@ ll getRandomNumber(ll l, ll r) {return uniform_int_distribution<ll>(l, r)(rng);}
 void solve() {
     ll n, x;
     cin >> n >> x;
-    vector<int> prices(n);
-    vector<int> pages(n);
+    vector<ll> coins(n);
     for (ll i=0; i<n; i++) {
-        cin >> prices[i];
+        cin >> coins[i];
     }
+    sort(all(coins));
+    if (binary_search(all(coins), x)) {
+        cout << "1";
+        exit(0);
+    }
+    debug(coins);
+    vector<ll> dp(x+1, INF);
+    dp[0] = 0;
     for (ll i=0; i<n; i++) {
-        cin >> pages[i];
+        if (coins[i] <= x)
+            dp[coins[i]] = 1L;
     }
-    vector<vector<int>> dp(n+1, vector<int>(x+1, 0));
-    for (int i=1; i<=n; i++) {
-        for (int j=0; j<=x; j++) {
-            if (j >= prices[i-1]) {
-                dp[i][j] = max(dp[i-1][j], pages[i-1] + dp[i-1][j-prices[i-1]]);
-            } else {
-                dp[i][j] = dp[i-1][j];
-            }
+    //debug(dp);
+    for (ll j=1; j<=x; j++) {
+        for (ll i=0; i<n; i++) {
+            ll coin = coins[i];
+            if (j-coin < 0) break;
+            if (dp[j-coin] != INF)
+                dp[j] = min(dp[j], dp[j-coin]+1); 
         }
     }
     debug(dp);
-    cout << dp[n][x];
+    if (dp[x] == INF) {
+        cout << "-1";
+    } else {
+        cout << dp[x];
+    }
 }
 int main() {
 #ifdef local

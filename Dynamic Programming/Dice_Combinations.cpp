@@ -23,7 +23,7 @@ using namespace __gnu_pbds;
 #define sz(x) ((int)(x).size())
 #define all(x) (x).begin(), (x).end()
 
-#ifdef local
+#ifdef shubhvash
 #define debug(x) cerr << #x<<" "; _print(x); cerr << endl;
 #else
 #define debug(x);
@@ -74,32 +74,22 @@ ll phin(ll n) {ll number = n; if (n % 2 == 0) {number /= 2; while (n % 2 == 0) n
 ll getRandomNumber(ll l, ll r) {return uniform_int_distribution<ll>(l, r)(rng);} 
 /*--------------------------------------------------------------------------------------------------------------------------*/
 void solve() {
-    ll n, x;
-    cin >> n >> x;
-    vector<int> prices(n);
-    vector<int> pages(n);
-    for (ll i=0; i<n; i++) {
-        cin >> prices[i];
-    }
-    for (ll i=0; i<n; i++) {
-        cin >> pages[i];
-    }
-    vector<vector<int>> dp(n+1, vector<int>(x+1, 0));
+    int n;
+    cin >> n;
+    vector<int> dp(n+1, 0);
+    dp[0] = 1;
     for (int i=1; i<=n; i++) {
-        for (int j=0; j<=x; j++) {
-            if (j >= prices[i-1]) {
-                dp[i][j] = max(dp[i-1][j], pages[i-1] + dp[i-1][j-prices[i-1]]);
-            } else {
-                dp[i][j] = dp[i-1][j];
-            }
+        for (int j=1; j<=6; j++) {
+            if (i-j >= 0) {
+                dp[i] = (dp[i] + dp[i-j]) % MOD;
+            } else break;
         }
     }
-    debug(dp);
-    cout << dp[n][x];
+    cout << dp[n] % MOD;
 }
 int main() {
 #ifdef local
-    //freopen("Error.txt", "w", stderr);
+    freopen("Error.txt", "w", stderr);
 #endif
     fastio();
     auto start1 = high_resolution_clock::now();
