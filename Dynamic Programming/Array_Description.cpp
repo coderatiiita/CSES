@@ -32,7 +32,7 @@ using namespace __gnu_pbds;
 typedef long long ll;
 typedef unsigned long long ull;
 typedef long double lld;
-typedef __int128 ell;
+// typedef __int128 ell;
 typedef tree<pair<ll, ll>, null_type, less<pair<ll, ll>>, rb_tree_tag, tree_order_statistics_node_update > pbds; // find_by_order, order_of_key
 
 void _print(ll t) {cerr << t;}
@@ -76,21 +76,42 @@ ll getRandomNumber(ll l, ll r) {return uniform_int_distribution<ll>(l, r)(rng);}
 void solve() {
     int n, m;
     cin >> n >> m;
-    vector<int> arr(n);
-    for (int i=0; i<n; i++) {
-        cin >> arr[i];
-    }
-    vector<int> ways(n+1, 0);
+    vector<int> arr(n+1);
     for (int i=1; i<=n; i++) {
-        if (arr[i-1] == 0) {
-            if (i-2 >= 0 && arr[i-2] == 0)
-                ways[i] = m*ways[i-2];
-            else ways[i] += 2;
-            ways[i] %= MOD;
+        cin >> arr[i];    
+    }
+    vector<vector<int>> dp(n+1, vector<int>(m+1, 0));
+    if (arr[1] == 0) {
+        for (int j=1; j<=m; j++) {
+            dp[1][j] = 1;
+        }
+    } else {
+        dp[1][arr[1]] = 1;
+    }
+    for (int i=1; i<=n; i++) {
+        if (arr[i] == 0) {
+            for (int j=1; j<=m; j++) {
+                if (j-1 >=1) {
+                    dp[i][j] = (dp[i][j] + dp[i-1][j-1]) % MOD;
+                }
+                dp[i][j] = (dp[i][j] + dp[i-1][j]) % MOD;
+                if (j+1 <= m) {
+                    dp[i][j] = (dp[i][j] + dp[i-1][j+1]) % MOD;
+                }
+            }
+        } else {
+            if (arr[i]-1 >= 1)
+                dp[i][arr[i]] = (dp[i][arr[i]] + dp[i-1][arr[i]-1]) % MOD; 
+            dp[i][arr[i]] = (dp[i][arr[i]] + dp[i-1][arr[i]]) % MOD;
+            if (arr[i]+1 <= m) 
+                dp[i][arr[i]] = (dp[i][arr[i]] + dp[i-1][arr[i]+1]) % MOD; 
         }
     }
-    debug(ways);
-    cout << ways[n];
+    ll total = 0;
+    for (int j=1; j<=m; j++) {
+        total = (total + dp[n][j]) % MOD;
+    }
+    cout << total;
 }
 int main() {
 #ifdef local
