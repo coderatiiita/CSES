@@ -17,8 +17,3 @@ Any source file can be compiled with a modern C++ compiler.  For example:
 ```bash
 g++ -std=c++17 -O2 -pipe your_file.cpp -o your_program
 ```
-
-## Additional references
-
-- [USACO Guide](https://usaco.guide/problems/)
-
